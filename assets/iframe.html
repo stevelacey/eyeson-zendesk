@@ -11,29 +11,59 @@
     // https://developer.zendesk.com/apps/docs/apps-v2
     var client = ZAFClient.init();
 
-    function renderText(text) {
-      var mainSectionEl = document.querySelector('section[data-main]');
-      mainSectionEl.innerText = text;
+    function render(text) {
+      var main = document.querySelector('section[data-main]');
+
+      btn = document.createElement('button');
+      btn.innerText = 'Launch video chat'
+
+      btn.onclick = function () {
+        client.context().then(function(context) {
+          var id = context.account.subdomain + '-' + context.ticketId;
+
+          getUser().then(function (user) {
+            return createRoom(id, user);
+          });
+        });
+      }
+
+      main.innerHTML = '';
+      main.appendChild(btn);
     }
 
-    function getCurrentUser() {
+    function getUser() {
       return client.get('currentUser').then(function(data) {
         return data['currentUser'];
       });
     }
 
-    function createRoom() {
-      client.ajax('createRoom').done(function(data) {
-        console.log(data)
+    function createRoom(id, user) {
+      var request = {
+        url: 'https://api.eyeson.team/rooms',
+        headers: {'Authorization': '{{setting.api_key}}'},
+        data: {
+          id: id,
+          user: {
+            id: user.email,
+            name: user.name,
+            avatar: user.avatarUrl
+          }
+        },
+        secure: true,
+        type: 'POST'
+      };
+
+      client.request(request).then(function(data) {
+        console.log(data);
+        window.open(data.links.gui)
       });
     }
 
     function init() {
-      getCurrentUser().then(function(currentUser) {
-        renderText('Hi ' + currentUser.name + ', please make some changes to the ticket.');
+      getUser().then(function(user) {
+        console.log(user)
+        render('Hi ' + user.name + ', please make some changes to the ticket.');
       });
-
-      createRoom()
     }
 
     client.on('app.registered', function() {
