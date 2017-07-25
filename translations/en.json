@@ -1,0 +1,8 @@
+{
+  "app": {
+    "name": "eyeson",
+    "short_description": "Schedule video meetings straight from Zendesk",
+    "long_description": "Whether you make one-to-one video calls for spontaneous face-to-face communication, schedule video meetings for effective online collaboration or participate in webinars: use the full potential of communication and collaboration across distances and benefit from a scalable and future-proof solution.\nSimple access\nOur patented single-stream-solution is easily accessible via web browser or app and across different devices (desktop, smartphone, tablet). Simply login with your favorite social media account (Facebook, XING, LinkedIn) or email.\nSecure platform\nOur solution offers you state of-the-art environment for secure and confidential business communication.\nAdditional features\n• Messaging & Image Chat\n• Recording\n• Slide Presentations\n• Screen Cast\n• Responsive",
+    "installation_instructions": "Find the eyeson in the Zendesk marketplace."
+  }
+}
