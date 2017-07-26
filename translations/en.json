@@ -1,8 +1,8 @@
 {
   "app": {
     "name": "eyeson",
-    "short_description": "Schedule video meetings straight from Zendesk",
-    "long_description": "Whether you make one-to-one video calls for spontaneous face-to-face communication, schedule video meetings for effective online collaboration or participate in webinars: use the full potential of communication and collaboration across distances and benefit from a scalable and future-proof solution.\nSimple access\nOur patented single-stream-solution is easily accessible via web browser or app and across different devices (desktop, smartphone, tablet). Simply login with your favorite social media account (Facebook, XING, LinkedIn) or email.\nSecure platform\nOur solution offers you state of-the-art environment for secure and confidential business communication.\nAdditional features\n• Messaging & Image Chat\n• Recording\n• Slide Presentations\n• Screen Cast\n• Responsive",
-    "installation_instructions": "Find the eyeson in the Zendesk marketplace."
+    "short_description": "Video conferencing app providing online meeting rooms in your Zendesk tickets.",
+    "long_description": "Eyeson is a video conferencing app which provides your Zendesk team with online meeting rooms. Thanks to Single Stream Technology, eyeson meetings rooms are not affected by the number of active participants therefore providing HD quality while keeping your bandwidth low. Start a call one of your tickets and open the online meeting room for you and your team members.\n\nBenefit from video conferencing, integrated chat feed, screencasting, file presentation and guest login (invite a non-Zendesk team member to join the meeting room).\n\nHappy collaborating!\n\nContact developers at office@eyeson.team",
+    "installation_instructions": "To install the eyeson app:\n\n1. Sign in to your Zendesk Support account, then click the Admin icon in the sidebar.\n2. Select Marketplace under Apps, then find the eyeson app and click the tile.\n3. On the eyeson app page, click Install app in the upper-right corner.\n4. Enter a name for the app, then click Install."
   }
 }

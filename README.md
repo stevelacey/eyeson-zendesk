@@ -1,3 +1,3 @@
 # Eyeson Zendesk App
 
-Find the Eyeson Sidebar App in the Zendesk marketplace.
+Video conferencing app providing online meeting rooms in your Zendesk tickets.
