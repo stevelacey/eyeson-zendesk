@@ -1,75 +1,15 @@
+<!DOCTYPE html>
 <html>
 <head>
-  <link rel="stylesheet" href="https://assets.zendesk.com/apps/sdk-assets/css/1/zendesk_garden.css" type="text/css">
+  <link rel="stylesheet" href="https://assets.zendesk.com/apps/sdk-assets/css/1/zendesk_garden.css">
+  <link rel="stylesheet" href="app.css">
 </head>
 <body>
-  <section data-main>Loading...</section>
-  <!-- https://github.com/zendesk/zendesk_app_framework_sdk -->
-  <script type="text/javascript" src="https://assets.zendesk.com/apps/sdk/2.0/zaf_sdk.js"></script>
-  <script>
-    // Initialise the Zendesk JavaScript API client
-    // https://developer.zendesk.com/apps/docs/apps-v2
-    var client = ZAFClient.init();
+  <section class="text-center" data-main>
+    <button class="btn" data-start-button>Start a video chat</button>
+  </section>
 
-    function render(text) {
-      var main = document.querySelector('section[data-main]');
-
-      btn = document.createElement('button');
-      btn.innerText = 'Launch video chat'
-
-      btn.onclick = function () {
-        client.context().then(function(context) {
-          var id = context.account.subdomain + '-' + context.ticketId;
-
-          getUser().then(function (user) {
-            return createRoom(id, user);
-          });
-        });
-      }
-
-      main.innerHTML = '';
-      main.appendChild(btn);
-    }
-
-    function getUser() {
-      return client.get('currentUser').then(function(data) {
-        return data['currentUser'];
-      });
-    }
-
-    function createRoom(id, user) {
-      var request = {
-        url: 'https://api.eyeson.team/rooms',
-        headers: {'Authorization': '{{setting.api_key}}'},
-        data: {
-          id: id,
-          user: {
-            id: user.email,
-            name: user.name,
-            avatar: user.avatarUrl
-          }
-        },
-        secure: true,
-        type: 'POST'
-      };
-
-      client.request(request).then(function(data) {
-        console.log(data);
-        window.open(data.links.gui)
-      });
-    }
-
-    function init() {
-      getUser().then(function(user) {
-        console.log(user)
-        render('Hi ' + user.name + ', please make some changes to the ticket.');
-      });
-    }
-
-    client.on('app.registered', function() {
-      client.invoke('resize', { width: '100%', height: '80px' });
-      init();
-    });
-  </script>
+  <script src="https://assets.zendesk.com/apps/sdk/2.0/zaf_sdk.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>

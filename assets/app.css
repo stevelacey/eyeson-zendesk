@@ -1,0 +1,36 @@
+* {
+  box-sizing: border-box;
+}
+
+.btn {
+  background-color: #9e206c;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  font-family: proxima-nova-zendesk, system-ui, -apple-system, system-ui, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  letter-spacing: normal;
+  line-height: 18px;
+  margin-bottom: 0px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 5px;
+  padding: 15px 45px;
+  white-space: nowrap;
+  border: 0;
+  font-weight: bold;
+  -webkit-appearance: none;
+}
+
+.btn:focus, .btn:hover {
+  background-color: #74174f;
+}
+
+.btn:focus {
+  box-shadow: 0 0 0 2px rgba(158, 32, 108, .5);
+  outline: 0;
+}
+
+.text-center {
+  text-align: center;
+}
