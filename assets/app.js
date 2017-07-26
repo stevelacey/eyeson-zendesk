@@ -7,23 +7,42 @@ function init() {
     var roomWindow = openWindow();
 
     client.get(['currentUser', 'ticket']).then(function(data) {
+      var ticket = data.ticket,
+          user = data.currentUser;
+
       var createRoom = {
         url: 'https://api.eyeson.team/rooms',
         headers: {'Authorization': '{{setting.api_key}}'},
         data: {
-          id: data.ticket.brand.subdomain + '-' + data.ticket.id,
+          id: ticket.brand.subdomain + '-' + ticket.id,
           user: {
-            id: data.currentUser.email,
-            name: data.currentUser.name,
-            avatar: data.currentUser.avatarUrl,
+            id: user.email,
+            name: user.name,
+            avatar: user.avatarUrl,
           }
         },
         secure: true,
         type: 'POST',
       };
 
-      client.request(createRoom).then(function(data) {
-        roomWindow.location = data.links.gui;
+      client.request(createRoom).then(function(room) {
+        var createComment = {
+          url: '/api/v2/tickets/' + ticket.id + '.json',
+          type: 'PUT',
+          data: {
+            'ticket': {
+              'comment': {
+                'author_id': user.id,
+                'body': room.links.gui,
+              }
+            }
+          },
+          dataType: 'json'
+        };
+
+        client.request(createComment);
+
+        roomWindow.location = room.links.gui;
       });
     });
   }
