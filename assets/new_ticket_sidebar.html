@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+  <script src="https://assets.zendesk.com/apps/sdk/2.0/zaf_sdk.js"></script>
+  <script>
+    zendesk = ZAFClient.init();
+    zendesk.get(['requirement:eyeson_room']).then(function(data) {
+      var requirement = data['requirement:eyeson_room'];
+      zendesk.invoke('ticketFields:custom_field_' + requirement.requirement_id + '.hide');
+    });
+  </script>
+</body>
+</html>
