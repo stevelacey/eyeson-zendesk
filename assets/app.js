@@ -1,4 +1,4 @@
-var eyeson, start, ticket, ticketField, user, zendesk;
+var eyeson, room, start, ticket, user, zendesk;
 
 eyeson = {
   request: function(options) {
@@ -15,10 +15,7 @@ zendesk = ZAFClient.init();
 function init() {
   start = document.querySelector('button[data-start-button]');
   start.onclick = startMeeting;
-
-  if (ticketField.value.room.shutdown) return;
-
-  checkMeeting();
+  // checkMeeting();
 }
 
 function openWindow() {
@@ -49,7 +46,7 @@ function startMeeting() {
     url: '/rooms',
     type: 'POST',
     data: {
-      id: ticket.brand.subdomain + '-' + ticket.id,
+      id: room.id,
       user: {
         id: user.email,
         name: user.name,
@@ -59,55 +56,41 @@ function startMeeting() {
   };
 
   eyeson.request(createRoom).then(function(response) {
-    comment = null;
-
-    if (ticketField.value.room.shutdown) {
-      comment = {
-        author_id: user.id,
-        body: 'I just started an eyeson video meeting.',
-      }
+    if (response.room.shutdown) {
+      updateTicket('I just started an eyeson video meeting.');
     }
 
-    ticketField.value = response;
-    updateTicket(comment);
-    roomWindow.location = ticketField.value.links.gui;
+    roomWindow.location = response.links.gui;
   });
 }
 
-function checkMeeting() {
-  eyeson.request('/rooms/' + ticketField.value.access_key).then(
-    function(response) {
-      ticketField.value = response;
+// function checkMeeting() {
+//   eyeson.request('/rooms/' + room.id).then(
+//     function(response) {
+//       if (!response.room.shutdown) {
+//         start.innerText = 'Join video meeting';
+//       }
+//     },
+//     function(response) {
+//       // gone, probably, do nothing
+//     },
+//   );
+// }
 
-      if (!ticketField.value.room.shutdown) {
-        start.innerText = 'Join video meeting';
-      }
-
-      updateTicket()
-    },
-    function(response) {
-      // gone, probably, emulate a shutdown for now
-      ticketField.value.room.shutdown = true;
-      updateTicket()
-    },
-  );
-}
-
-function updateTicket(comment) {
+function updateTicket(message) {
   var options = {
     url: '/api/v2/tickets/' + ticket.id + '.json',
     type: 'PUT',
     data: {
       ticket: {
-        custom_fields: {
-          [ticketField.id]: JSON.stringify(ticketField.value),
-        },
+        comment: {
+          author_id: user.id,
+          body: message,
+        }
       }
     },
     dataType: 'json'
   };
-
-  if (comment) options.data.ticket.comment = comment;
 
   zendesk.request(options);
 }
@@ -115,18 +98,11 @@ function updateTicket(comment) {
 zendesk.on('app.registered', function() {
   zendesk.invoke('resize', { width: '100%', height: '60px' });
 
-  zendesk.get(['currentUser', 'requirement:eyeson_room', 'ticket']).then(function(data) {
-    var requirement = data['requirement:eyeson_room'];
-
+  zendesk.get(['currentUser', 'ticket']).then(function(data) {
+    room = {id: data.ticket.brand.subdomain + '-' + data.ticket.id}
     ticket = data.ticket;
-    ticketField = {id: requirement.requirement_id, value: null};
     user = data.currentUser;
 
-    zendesk.invoke('ticketFields:custom_field_' + ticketField.id + '.hide');
-
-    zendesk.get('ticket.customField:custom_field_' + ticketField.id).then(function(data) {
-      ticketField.value = JSON.parse(data['ticket.customField:custom_field_' + ticketField.id]);
-      init();
-    });
+    init();
   });
 });
