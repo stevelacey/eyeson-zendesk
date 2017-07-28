@@ -1,13 +1,32 @@
 var eyeson, room, start, ticket, user, zendesk;
 
 eyeson = {
+  createRoom: function(room, user) {
+    return this.request({
+      url: '/rooms',
+      type: 'POST',
+      data: {
+        id: room.id,
+        user: {
+          id: user.email,
+          name: user.name,
+          avatar: user.avatarUrl,
+        }
+      },
+    });
+  },
+
+  getRoom: function(room) {
+    return this.request('/rooms/' + room.id);
+  },
+
   request: function(options) {
     if (typeof options === 'string') options = {url: options};
     if (options.url.startsWith('/')) options.url = 'https://api.eyeson.team' + options.url;
     options.headers = {'Authorization': '{{ setting.api_key }}'};
     options.secure = true;
     return zendesk.request(options);
-  }
+  },
 }
 
 zendesk = ZAFClient.init();
@@ -15,7 +34,15 @@ zendesk = ZAFClient.init();
 function init() {
   start = document.querySelector('button[data-start-button]');
   start.onclick = startMeeting;
-  // checkMeeting();
+
+  // eyeson.getRoom(room).then(
+  //   function(response) {
+  //     if (!response.room.shutdown) start.innerText = 'Join video meeting';
+  //   },
+  //   function(response) {
+  //     // gone, probably, do nothing
+  //   },
+  // );
 }
 
 function openWindow() {
@@ -42,40 +69,23 @@ function openWindow() {
 function startMeeting() {
   var roomWindow = openWindow();
 
-  var createRoom = {
-    url: '/rooms',
-    type: 'POST',
-    data: {
-      id: room.id,
-      user: {
-        id: user.email,
-        name: user.name,
-        avatar: user.avatarUrl,
-      }
-    },
-  };
+  var shouldComment = false
 
-  eyeson.request(createRoom).then(function(response) {
-    if (response.room.shutdown) {
-      updateTicket('I just started an eyeson video meeting.');
-    }
+  // eyeson.getRoom(room).then(
+  //   function(response) {
+  //     if (response.room.shutdown) shouldComment = true;
+  //   },
+  //   function(response) {
+  //     if (response.statusCode == 404) shouldComment = true;
+  //   },
+  // );
+
+  eyeson.createRoom(room, user).then(function(response) {
+    if (shouldComment) updateTicket('I just started an eyeson video meeting.');
 
     roomWindow.location = response.links.gui;
   });
 }
-
-// function checkMeeting() {
-//   eyeson.request('/rooms/' + room.id).then(
-//     function(response) {
-//       if (!response.room.shutdown) {
-//         start.innerText = 'Join video meeting';
-//       }
-//     },
-//     function(response) {
-//       // gone, probably, do nothing
-//     },
-//   );
-// }
 
 function updateTicket(message) {
   var options = {
@@ -99,7 +109,7 @@ zendesk.on('app.registered', function() {
   zendesk.invoke('resize', { width: '100%', height: '60px' });
 
   zendesk.get(['currentUser', 'ticket']).then(function(data) {
-    room = {id: data.ticket.brand.subdomain + '-' + data.ticket.id}
+    room = {id: data.ticket.brand.subdomain + '-' + data.ticket.id};
     ticket = data.ticket;
     user = data.currentUser;
 
