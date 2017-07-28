@@ -20,7 +20,7 @@
       "secure": true
     }
   ],
-  "private": true,
+  "private": false,
   "singleInstall": true,
   "version": "1.0",
   "frameworkVersion": "2.0"
