@@ -35,14 +35,14 @@ function init() {
   start = document.querySelector('button[data-start-button]');
   start.onclick = startMeeting;
 
-  // eyeson.getRoom(room).then(
-  //   function(response) {
-  //     if (!response.room.shutdown) start.innerText = 'Join video meeting';
-  //   },
-  //   function(response) {
-  //     // gone, probably, do nothing
-  //   },
-  // );
+  eyeson.getRoom(room).then(
+    function(response) {
+      if (!response.shutdown) start.innerText = 'Join video meeting';
+    },
+    function(response) {
+      // gone, probably, do nothing
+    },
+  );
 }
 
 function openWindow() {
@@ -67,22 +67,20 @@ function openWindow() {
 }
 
 function startMeeting() {
-  var roomWindow = openWindow();
+  var roomWindow = openWindow(),
+      shouldComment = false;
 
-  var shouldComment = false
-
-  // eyeson.getRoom(room).then(
-  //   function(response) {
-  //     if (response.room.shutdown) shouldComment = true;
-  //   },
-  //   function(response) {
-  //     if (response.statusCode == 404) shouldComment = true;
-  //   },
-  // );
-
-  eyeson.createRoom(room, user).then(function(response) {
+  eyeson.getRoom(room).then(
+    function(response) {
+      if (response.shutdown) shouldComment = true;
+      return eyeson.createRoom(room, user);
+    },
+    function(response) {
+      shouldComment = true;
+      return eyeson.createRoom(room, user);
+    },
+  ).then(function(response) {
     if (shouldComment) updateTicket('I just started an eyeson video meeting.');
-
     roomWindow.location = response.links.gui;
   });
 }
