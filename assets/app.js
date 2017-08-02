@@ -1,4 +1,5 @@
-var btn, eyeson, txt, room, ticket, user, zendesk;
+var btn, eyeson, txt, room, shutdown, ticket, user, zendesk,
+    SMALL = '55px', LARGE = '85px';
 
 eyeson = {
   createRoom: function(room, user) {
@@ -38,10 +39,12 @@ function init() {
 
   eyeson.getRoom(room).then(
     function(response) {
-      toggleInterface(response.shutdown);
+      shutdown = response.shutdown;
+      renderSidebar();
     },
     function(response) {
-      // gone, probably, do nothing
+      shutdown = true;
+      renderSidebar();
     },
   );
 }
@@ -68,41 +71,33 @@ function openWindow() {
 }
 
 function startMeeting() {
-  var roomWindow = openWindow(),
-      shouldComment = false;
+  var roomWindow = openWindow();
 
-  toggleInterface(false);
-
-  eyeson.getRoom(room).then(
-    function(response) {
-      if (response.shutdown) shouldComment = true;
-      return eyeson.createRoom(room, user);
-    },
-    function(response) {
-      shouldComment = true;
-      return eyeson.createRoom(room, user);
-    },
-  ).then(function(response) {
-    if (shouldComment) {
+  eyeson.createRoom(room, user).then(function(response) {
+    if (shutdown) {
       var message = 'I just started an eyeson video meeting. ' +
                 '<a href="' + response.links.guest_join + '">Join meeting</a>.',
           public = !!parseInt(btn.form.public.value, 10);
       updateTicket(message, public);
     }
     roomWindow.location = response.links.gui;
+    shutdown = response.room.shutdown;
+    renderSidebar();
   });
 }
 
-function toggleInterface(shutdown) {
+function renderSidebar() {
   if (shutdown) {
     btn.innerText = 'Start a video meeting';
     txt.style.display = 'block';
-    zendesk.invoke('resize', { width: '100%', height: '90px' });
   } else {
     btn.innerText = 'Join video meeting';
     txt.style.display = 'none';
-    zendesk.invoke('resize', { width: '100%', height: '60px' });
   }
+
+  zendesk.invoke('resize', {width: '100%', height: shutdown ? LARGE : SMALL});
+
+  btn.form.style.display = 'block';
 }
 
 function updateTicket(message, public) {
@@ -125,7 +120,7 @@ function updateTicket(message, public) {
 }
 
 zendesk.on('app.registered', function() {
-  zendesk.invoke('resize', { width: '100%', height: '90px' });
+  zendesk.invoke('resize', {width: '100%', height: LARGE});
 
   zendesk.get(['currentUser', 'ticket']).then(function(data) {
     room = {id: data.ticket.brand.subdomain + '-' + data.ticket.id};

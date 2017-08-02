@@ -40,7 +40,8 @@ label {
 }
 
 input {
-  margin: 0 .25rem;
+  width: 1rem;
+  margin-left: .05rem;
 }
 
 .text-center {
