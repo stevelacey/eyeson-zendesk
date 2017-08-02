@@ -37,7 +37,7 @@ function init() {
 
   eyeson.getRoom(room).then(
     function(response) {
-      if (!response.shutdown) start.innerText = 'Join video meeting';
+      toggleButton(response.shutdown);
     },
     function(response) {
       // gone, probably, do nothing
@@ -70,6 +70,8 @@ function startMeeting() {
   var roomWindow = openWindow(),
       shouldComment = false;
 
+  toggleButton(false);
+
   eyeson.getRoom(room).then(
     function(response) {
       if (response.shutdown) shouldComment = true;
@@ -83,6 +85,14 @@ function startMeeting() {
     if (shouldComment) updateTicket('I just started an eyeson video meeting.');
     roomWindow.location = response.links.gui;
   });
+}
+
+function toggleButton(shutdown) {
+  if (shutdown) {
+    start.innerText = 'Start a video meeting';
+  } else {
+    start.innerText = 'Join video meeting';
+  }
 }
 
 function updateTicket(message) {
