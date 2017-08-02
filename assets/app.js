@@ -82,7 +82,12 @@ function startMeeting() {
       return eyeson.createRoom(room, user);
     },
   ).then(function(response) {
-    if (shouldComment) updateTicket('I just started an eyeson video meeting.');
+    if (shouldComment) {
+      updateTicket(
+        'I just started an eyeson video meeting. ' +
+        '<a href="' + response.links.guest_join + '">Join meeting</a>.'
+      );
+    }
     roomWindow.location = response.links.gui;
   });
 }
@@ -103,7 +108,7 @@ function updateTicket(message) {
       ticket: {
         comment: {
           author_id: user.id,
-          body: message,
+          html_body: message,
         }
       }
     },
