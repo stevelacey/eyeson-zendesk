@@ -1,4 +1,4 @@
-var eyeson, room, start, ticket, user, zendesk;
+var btn, eyeson, txt, room, ticket, user, zendesk;
 
 eyeson = {
   createRoom: function(room, user) {
@@ -32,12 +32,13 @@ eyeson = {
 zendesk = ZAFClient.init();
 
 function init() {
-  start = document.querySelector('button[data-start-button]');
-  start.onclick = startMeeting;
+  btn = document.querySelector('button[data-btn]');
+  btn.onclick = startMeeting;
+  txt = document.querySelector('.text-options');
 
   eyeson.getRoom(room).then(
     function(response) {
-      toggleButton(response.shutdown);
+      toggleInterface(response.shutdown);
     },
     function(response) {
       // gone, probably, do nothing
@@ -70,7 +71,7 @@ function startMeeting() {
   var roomWindow = openWindow(),
       shouldComment = false;
 
-  toggleButton(false);
+  toggleInterface(false);
 
   eyeson.getRoom(room).then(
     function(response) {
@@ -83,24 +84,28 @@ function startMeeting() {
     },
   ).then(function(response) {
     if (shouldComment) {
-      updateTicket(
-        'I just started an eyeson video meeting. ' +
-        '<a href="' + response.links.guest_join + '">Join meeting</a>.'
-      );
+      var message = 'I just started an eyeson video meeting. ' +
+                '<a href="' + response.links.guest_join + '">Join meeting</a>.',
+          public = !!parseInt(btn.form.public.value, 10);
+      updateTicket(message, public);
     }
     roomWindow.location = response.links.gui;
   });
 }
 
-function toggleButton(shutdown) {
+function toggleInterface(shutdown) {
   if (shutdown) {
-    start.innerText = 'Start a video meeting';
+    btn.innerText = 'Start a video meeting';
+    txt.style.display = 'block';
+    zendesk.invoke('resize', { width: '100%', height: '90px' });
   } else {
-    start.innerText = 'Join video meeting';
+    btn.innerText = 'Join video meeting';
+    txt.style.display = 'none';
+    zendesk.invoke('resize', { width: '100%', height: '60px' });
   }
 }
 
-function updateTicket(message) {
+function updateTicket(message, public) {
   var options = {
     url: '/api/v2/tickets/' + ticket.id + '.json',
     type: 'PUT',
@@ -109,6 +114,7 @@ function updateTicket(message) {
         comment: {
           author_id: user.id,
           html_body: message,
+          public: public,
         }
       }
     },
@@ -119,7 +125,7 @@ function updateTicket(message) {
 }
 
 zendesk.on('app.registered', function() {
-  zendesk.invoke('resize', { width: '100%', height: '60px' });
+  zendesk.invoke('resize', { width: '100%', height: '90px' });
 
   zendesk.get(['currentUser', 'ticket']).then(function(data) {
     room = {id: data.ticket.brand.subdomain + '-' + data.ticket.id};

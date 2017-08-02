@@ -1,14 +1,18 @@
+html, body {
+  font-size: 16px;
+}
+
 * {
   box-sizing: border-box;
 }
 
-.btn {
+button {
   background-color: #9e206c;
   border-radius: 4px;
   color: white;
   cursor: pointer;
   font-family: proxima-nova-zendesk, system-ui, -apple-system, system-ui, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
-  font-size: 1rem;
+  font-size: .875rem;
   letter-spacing: normal;
   line-height: 18px;
   margin-bottom: 0px;
@@ -22,15 +26,30 @@
   -webkit-appearance: none;
 }
 
-.btn:focus, .btn:hover {
+button:focus, button:hover {
   background-color: #74174f;
 }
 
-.btn:focus {
+button:focus {
   box-shadow: 0 0 0 2px rgba(158, 32, 108, .5);
   outline: 0;
 }
 
+label {
+  cursor: pointer;
+}
+
+input {
+  margin: 0 .25rem;
+}
+
 .text-center {
   text-align: center;
+}
+
+.text-options {
+  padding-top: 1rem;
+  color: #aaa;
+  font-size: .75rem;
+  line-height: 1;
 }

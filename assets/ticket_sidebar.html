@@ -6,7 +6,15 @@
 </head>
 <body>
   <section class="text-center" data-main>
-    <button class="btn" data-start-button>Start a video meeting</button>
+    <form data-form>
+      <button data-btn type="button">Start a video meeting</button>
+
+      <p class="text-options">
+        with
+        <label><input name="public" type="radio" value="0" checked> agents</label>
+        <label><input name="public" type="radio" value="1"> everyone</label>
+      </p>
+    </form>
   </section>
 
   <script src="https://assets.zendesk.com/apps/sdk/2.0/zaf_sdk.js"></script>
